@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox prefHeight="400.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.Controller">
+   <children>
+      <HBox prefHeight="39.0" prefWidth="640.0">
+         <children>
+            <TextField fx:id="tf_nick" alignment="CENTER" prefHeight="39.0" prefWidth="230.0" promptText="Nick_Name">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </TextField>
+            <TextField fx:id="tf_ip" alignment="CENTER" prefHeight="39.0" prefWidth="269.0" text="127.0.0.1">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </TextField>
+            <TextField fx:id="tf_port" alignment="CENTER" prefHeight="39.0" prefWidth="120.0" text="8000" />
+         </children>
+      </HBox>
+      <TextArea fx:id="display" editable="false" prefHeight="332.0" prefWidth="640.0" />
+      <HBox prefHeight="38.0" prefWidth="640.0">
+         <children>
+            <Button fx:id="btn_tgl" mnemonicParsing="false" prefHeight="72.0" prefWidth="95.0" text="START" textAlignment="CENTER" onAction="#start_stop">
+               <HBox.margin>
+                  <Insets right="10.0" />
+               </HBox.margin>
+            </Button>
+            <TextField prefHeight="73.0" prefWidth="426.0" promptText="Input_Message" />
+            <Button fx:id="btn_send" mnemonicParsing="false" prefHeight="40.0" prefWidth="117.0" text="SEND">
+               <HBox.margin>
+                  <Insets left="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </children>
+</VBox>
