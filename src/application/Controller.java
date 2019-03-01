@@ -22,12 +22,10 @@ public class Controller {
 	private TextField tf_nick;
 	@FXML
 	private Button btn_tgl;
-
 	@FXML
 	private void start_stop(ActionEvent event) throws IOException {
 		if (btn_tgl.getText().equals("START")) {
 			model.START_SERVER(tf_ip.getText(), tf_port.getText(), tf_nick.getText());
-
 			if (model.socket.isConnected()) {
 				display.appendText("SERVER Connect Success!");
 				btn_tgl.setText("STOP");

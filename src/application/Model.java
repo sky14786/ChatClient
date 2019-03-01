@@ -16,9 +16,6 @@ public class Model {
 		socket = new Socket(ip,Integer.parseInt(port));
 		input = new DataInputStream(socket.getInputStream());
 		output = new DataOutputStream(socket.getOutputStream());
-			
-	
-
 	}
 
 	public void STOP_SERVER() {
