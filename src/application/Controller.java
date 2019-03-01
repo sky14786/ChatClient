@@ -22,6 +22,7 @@ public class Controller {
 	private TextField tf_nick;
 	@FXML
 	private Button btn_tgl;
+
 	@FXML
 	private void start_stop(ActionEvent event) throws IOException {
 		if (btn_tgl.getText().equals("START")) {
@@ -31,6 +32,11 @@ public class Controller {
 				btn_tgl.setText("STOP");
 			}
 		}
+	}
+
+	@FXML
+	private void receive(ActionEvent event) {
+
 	}
 
 }

@@ -24,7 +24,7 @@
             <TextField fx:id="tf_port" alignment="CENTER" prefHeight="39.0" prefWidth="120.0" text="8000" />
          </children>
       </HBox>
-      <TextArea fx:id="display" editable="false" prefHeight="332.0" prefWidth="640.0" />
+      <TextArea fx:id="display" editable="false" prefHeight="332.0" prefWidth="640.0" onAction="#receive"/>
       <HBox prefHeight="38.0" prefWidth="640.0">
          <children>
             <Button fx:id="btn_tgl" mnemonicParsing="false" prefHeight="72.0" prefWidth="95.0" text="START" textAlignment="CENTER" onAction="#start_stop">
