@@ -11,6 +11,8 @@ import javafx.scene.control.TextField;
 
 public class Controller {
 	Model model = new Model();
+	
+	receive receive = new receive();
 
 	@FXML
 	public TextArea display;
@@ -36,7 +38,7 @@ public class Controller {
 
 	@FXML
 	private void receive(ActionEvent event) {
-
+		
 	}
 
 }
