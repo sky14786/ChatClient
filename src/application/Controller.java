@@ -10,35 +10,65 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class Controller {
-	Model model = new Model();
-	
-	receive receive = new receive();
+	private Model model = new Model();
 
 	@FXML
-	public TextArea display;
+	private TextArea TAdisplay;
 	@FXML
-	private TextField tf_ip;
+	private TextField TFip, TFport, TFnickname, TFmessage;
 	@FXML
-	private TextField tf_port;
-	@FXML
-	private TextField tf_nick;
-	@FXML
-	private Button btn_tgl;
+	private Button BTNtgl, BTNsend;
 
 	@FXML
-	private void start_stop(ActionEvent event) throws IOException {
-		if (btn_tgl.getText().equals("START")) {
-			model.START_SERVER(tf_ip.getText(), tf_port.getText(), tf_nick.getText());
-			if (model.socket.isConnected()) {
-				display.appendText("SERVER Connect Success!");
-				btn_tgl.setText("STOP");
+	private void OpenClose(ActionEvent event) {
+		try {
+			if (BTNtgl.getText().equals("START")) {
+				model.StartServer(TFip.getText(), TFport.getText(), TFnickname.getText());
+				if (model.CheckConnect()) {
+					TAdisplay.appendText("SERVER Connect Success!");
+					BTNtgl.setText("STOP");
+//					PrintDisplay();
+				}
+			} else {
+				TAdisplay.appendText("Connection termination!\n");
+				model.StopServer();
+				BTNtgl.setText("START");
 			}
+		}
+
+		catch (IOException e) {
 		}
 	}
 
 	@FXML
-	private void receive(ActionEvent event) {
-		
+	private void Send() {
+		model.Send(TFmessage.getText());
+		TFmessage.setText("");
 	}
 
+	public void PrintDisplay() {
+		while (true) {
+			if (model.GetMessage() != null && !model.MessageDuplicateCheck(model.GetMessage())) {
+				TAdisplay.appendText(model.GetMessage() + "\n");
+				model.SetTempMessage(model.GetMessage());
+			}
+		}
+	}
+
+}
+
+class PhysicalReceive extends Thread {
+	Model model = new Model();
+
+	public void run() {
+		model.Receive();
+	}
+}
+
+class DisplayReceive extends Thread {
+	Controller controller = new Controller();
+
+	public void run() {
+		controller.PrintDisplay();
+	}
 }

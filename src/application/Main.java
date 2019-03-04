@@ -9,8 +9,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 public class Main extends Application {
-	public Socket socket;
-
+	private PhysicalReceive physicalreceive = new PhysicalReceive();
+	private DisplayReceive displayreceive = new DisplayReceive();
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -18,6 +18,8 @@ public class Main extends Application {
 			primaryStage.setScene(new Scene(root));
 			primaryStage.setTitle("[CLIENT]");
 			primaryStage.show();
+			physicalreceive.run();
+			displayreceive.run();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -26,5 +28,6 @@ public class Main extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
+	
+	
 }
-//asdfasdfasdfasdf

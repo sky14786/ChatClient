@@ -7,53 +7,68 @@ import java.net.Socket;
 
 public class Model {
 
-	Socket socket;
-	DataInputStream input;
-	DataOutputStream output;
+	private static Socket socket;
+	private static DataInputStream input;
+	private static DataOutputStream output;
+	private String sendmessage, receivemessage, tempmessage = " ";
 
-	public void START_SERVER(String ip, String port, String nick_name) throws IOException {
+	public void StartServer(String ip, String port, String nickname) throws IOException {
 		socket = new Socket(ip, Integer.parseInt(port));
 		input = new DataInputStream(socket.getInputStream());
 		output = new DataOutputStream(socket.getOutputStream());
+		output.writeUTF(nickname);
 	}
 
-	public void STOP_SERVER() {
-
-	}
-
-//	public void receive() throws IOException {
-//		String receive_msg = input.readUTF();
-//	}
-
-	public void send(String msg) throws IOException {
-		output.writeUTF(msg + "\n");
-		output.flush();
-	}
-}
-
-class receive extends Thread {
-	Socket socket;
-	DataInputStream input;
-	DataOutputStream output;
-
-	receive(Socket socket) {
-		this.socket = socket;
-	}
-
-	@Override
-	public void run() {
-
+	public void StopServer() {
 		try {
-			String servermessage;
-			input = new DataInputStream(socket.getInputStream());
-			output = new DataOutputStream(socket.getOutputStream());
-			while (input.readUTF()!=null) {
-				servermessage = input.readUTF();
-				return servermessage;
-			}
+			String msg= "Connection terminatation!";
+			Send(msg);
+			socket.close();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+	public Boolean CheckConnect() {
+		return socket.isConnected();
+	}
+
+	public void Send(String msg) {
+		sendmessage = msg;
+		try {
+			output.writeUTF(sendmessage + "\n");
+			output.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+
+	}
+
+	public void Receive() {
+		try {
+			while (true) {
+				receivemessage = input.readUTF();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String GetMessage() {
+		return receivemessage;
+	}
+
+	public void SetTempMessage(String tempmessage) {
+		this.tempmessage = tempmessage;
+	}
+
+	public Boolean MessageDuplicateCheck(String receivemessage) {
+		if (tempmessage == receivemessage) {
+			return true;
+		} else {
+			return false;
 		}
 
 	}
