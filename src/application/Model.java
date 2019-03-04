@@ -21,9 +21,7 @@ public class Model {
 
 	}
 
-//	public void receive() throws IOException {
-//		String receive_msg = input.readUTF();
-//	}
+
 
 	public void send(String msg) throws IOException {
 		output.writeUTF(msg + "\n");
