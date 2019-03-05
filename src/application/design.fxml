@@ -11,29 +11,29 @@
    <children>
       <HBox prefHeight="39.0" prefWidth="640.0">
          <children>
-            <TextField fx:id="tf_nick" alignment="CENTER" prefHeight="39.0" prefWidth="230.0" promptText="Nick_Name">
+            <TextField fx:id="TFnick" alignment="CENTER" prefHeight="39.0" prefWidth="230.0" promptText="Nick_Name">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin>
             </TextField>
-            <TextField fx:id="tf_ip" alignment="CENTER" prefHeight="39.0" prefWidth="269.0" text="127.0.0.1">
+            <TextField fx:id="TFip" alignment="CENTER" prefHeight="39.0" prefWidth="269.0" text="127.0.0.1">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin>
             </TextField>
-            <TextField fx:id="tf_port" alignment="CENTER" prefHeight="39.0" prefWidth="120.0" text="8000" />
+            <TextField fx:id="TFport" alignment="CENTER" prefHeight="39.0" prefWidth="120.0" text="8000" />
          </children>
       </HBox>
-      <TextArea fx:id="display" editable="false" prefHeight="332.0" prefWidth="640.0" onAction="#receive"/>
+      <TextArea fx:id="TAdisplay" editable="false" prefHeight="332.0" prefWidth="640.0" />
       <HBox prefHeight="38.0" prefWidth="640.0">
          <children>
-            <Button fx:id="btn_tgl" mnemonicParsing="false" prefHeight="72.0" prefWidth="95.0" text="START" textAlignment="CENTER" onAction="#start_stop">
+            <Button fx:id="BTNtoggle" mnemonicParsing="false" prefHeight="72.0" prefWidth="95.0" text="START" textAlignment="CENTER" onAction="#Start_Stop">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin>
             </Button>
             <TextField prefHeight="73.0" prefWidth="426.0" promptText="Input_Message" />
-            <Button fx:id="btn_send" mnemonicParsing="false" prefHeight="40.0" prefWidth="117.0" text="SEND">
+            <Button fx:id="BTNsend" mnemonicParsing="false" prefHeight="40.0" prefWidth="117.0" text="SEND">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>

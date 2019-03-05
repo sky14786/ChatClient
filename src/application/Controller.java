@@ -1,7 +1,6 @@
 package application;
 
-import java.io.IOException;
-import java.net.Socket;
+
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,34 +10,30 @@ import javafx.scene.control.TextField;
 
 public class Controller {
 	Model model = new Model();
-	
-	receive receive = new receive();
 
 	@FXML
-	public TextArea display;
+	private TextArea TAdisplay;
 	@FXML
-	private TextField tf_ip;
+	private TextField TFport, TFip, TFnick;
 	@FXML
-	private TextField tf_port;
-	@FXML
-	private TextField tf_nick;
-	@FXML
-	private Button btn_tgl;
+	private Button BTNtoggle, BTNsned;
 
 	@FXML
-	private void start_stop(ActionEvent event) throws IOException {
-		if (btn_tgl.getText().equals("START")) {
-			model.START_SERVER(tf_ip.getText(), tf_port.getText(), tf_nick.getText());
-			if (model.socket.isConnected()) {
-				display.appendText("SERVER Connect Success!");
-				btn_tgl.setText("STOP");
+	private void Start_Stop(ActionEvent e) {
+		if(BTNtoggle.getText().equals("START")) {
+			model.Connect(TFip.getText(), TFnick.getText(), 8000);
+			if(model.GetReceiveMessaage().equals("false")) {
+				TAdisplay.appendText("서버 접속 성공!\n");
+				BTNtoggle.setText("STOP");
+			}
+			else {
+				TAdisplay.appendText("서버 접속 실패 닉네임 확인 요망!\n");
 			}
 		}
-	}
-
-	@FXML
-	private void receive(ActionEvent event) {
-		
+		else {
+			model.DisConnect();
+			TAdisplay.appendText("서버와의 연결 종료!\n");
+		}
 	}
 
 }

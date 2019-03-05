@@ -43,7 +43,7 @@ class Manager {
 				if (!DuplicateCheck()) {
 					LogicalConnect();
 				} else {
-					sendmessage = "NICK NAME DUPLICATED ERROR";
+					sendmessage = isduplicate.toString();
 					output.writeUTF(sendmessage + "\n");
 					output.flush();
 					socket.close();
@@ -64,7 +64,7 @@ class Manager {
 			hm.put(socket, nickname);
 			inputs.add(input);
 			outputs.add(output);
-			sendmessage = "[WELCOME MY SERVER]";
+			sendmessage = isduplicate.toString();
 			output.writeUTF(sendmessage + "\n");
 			output.flush();
 		} catch (IOException e) {

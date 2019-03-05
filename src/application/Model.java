@@ -4,55 +4,53 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class Model {
+	private Socket socket;
+	private DataInputStream input;
+	private DataOutputStream output;
+	private String nickname, sendmessage, receivemessage;
 
-	Socket socket;
-	DataInputStream input;
-	DataOutputStream output;
-
-	public void START_SERVER(String ip, String port, String nick_name) throws IOException {
-		socket = new Socket(ip, Integer.parseInt(port));
-		input = new DataInputStream(socket.getInputStream());
-		output = new DataOutputStream(socket.getOutputStream());
-	}
-
-	public void STOP_SERVER() {
-
-	}
-
-
-
-	public void send(String msg) throws IOException {
-		output.writeUTF(msg + "\n");
-		output.flush();
-	}
-}
-
-class receive extends Thread {
-	Socket socket;
-	DataInputStream input;
-	DataOutputStream output;
-
-	receive(Socket socket) {
-		this.socket = socket;
-	}
-
-	@Override
-	public void run() {
+	public void Connect(String ip, String nickname, int port) {
 
 		try {
-			String servermessage;
+			this.nickname = nickname;
+			socket = new Socket(ip, port);
 			input = new DataInputStream(socket.getInputStream());
 			output = new DataOutputStream(socket.getOutputStream());
-			while (input.readUTF()!=null) {
-				servermessage = input.readUTF();
-				return servermessage;
+
+			output.writeUTF(nickname);
+			output.flush();
+
+			String msg = input.readUTF();
+			if (msg.equals("false")) {
+				SetReceiveMessage(msg);
+			} else {
+				SetReceiveMessage(msg);
 			}
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
+			e.printStackTrace();
+
+		}
+	}
+
+	public void DisConnect() {
+		try {
+			socket.close();
+		} catch (IOException e) {
+
 			e.printStackTrace();
 		}
+	}
 
+	public void SetReceiveMessage(String message) {
+		receivemessage = message;
+	}
+
+	public String GetReceiveMessaage() {
+		return receivemessage;
 	}
 }
