@@ -4,7 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
+
 
 public class Model {
 	private Socket socket;
@@ -24,10 +24,12 @@ public class Model {
 			output.flush();
 
 			String msg = input.readUTF();
-			if (msg.equals("false")) {
-				SetReceiveMessage(msg);
-			} else {
-				SetReceiveMessage(msg);
+			while(true) {
+				if (msg.equals("false")) {
+					SetReceiveMessage(msg);
+				} else {
+					SetReceiveMessage(msg);
+				}
 			}
 
 		} catch (IOException e) {
@@ -52,5 +54,9 @@ public class Model {
 
 	public String GetReceiveMessaage() {
 		return receivemessage;
+	}
+	
+	public Boolean GetStatus() {
+		return socket.isConnected();
 	}
 }

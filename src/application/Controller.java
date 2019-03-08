@@ -22,7 +22,7 @@ public class Controller {
 	private void Start_Stop(ActionEvent e) {
 		if(BTNtoggle.getText().equals("START")) {
 			model.Connect(TFip.getText(), TFnick.getText(), 8000);
-			if(model.GetReceiveMessaage().equals("false")) {
+			if(model.GetStatus()) {
 				TAdisplay.appendText("서버 접속 성공!\n");
 				BTNtoggle.setText("STOP");
 			}
