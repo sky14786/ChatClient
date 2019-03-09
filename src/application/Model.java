@@ -4,13 +4,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-
+import java.util.StringTokenizer;
 
 public class Model {
 	private Socket socket;
 	private DataInputStream input;
 	private DataOutputStream output;
-	private String nickname, sendmessage, receivemessage;
+	private String nickname, sendmessage, receivemessage, identity;
+	private StringTokenizer msg;
 
 	public void Connect(String ip, String nickname, int port) {
 
@@ -23,13 +24,15 @@ public class Model {
 			output.writeUTF(nickname);
 			output.flush();
 
-			String msg = input.readUTF();
-			while(true) {
-				if (msg.equals("false")) {
-					SetReceiveMessage(msg);
-				} else {
-					SetReceiveMessage(msg);
+			while (true) {
+				msg = new StringTokenizer(input.readUTF(), ":");
+				identity = msg.nextToken();
+				if (identity.equals("0001")) {
+					SetReceiveMessage(msg.nextToken());
+				} else if (identity.equals("0000")) {
+
 				}
+
 			}
 
 		} catch (IOException e) {
@@ -48,6 +51,19 @@ public class Model {
 		}
 	}
 
+	public void SendMessage(String msg) {
+
+		try {
+			sendmessage = "1001:" + msg + "\n";
+			output.writeUTF(sendmessage);
+			output.flush();
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
+	}
+
 	public void SetReceiveMessage(String message) {
 		receivemessage = message;
 	}
@@ -55,8 +71,24 @@ public class Model {
 	public String GetReceiveMessaage() {
 		return receivemessage;
 	}
-	
+
 	public Boolean GetStatus() {
 		return socket.isConnected();
+	}
+}
+
+class MThread extends Thread {
+	Model model = new Model();
+	String ip, nickname;
+	int port;
+
+	MThread(String ip, String nickname, int port) {
+		this.ip = ip;
+		this.nickname = nickname;
+		this.port = port;
+	}
+
+	public void run() {
+		model.Connect(ip, nickname, port);
 	}
 }

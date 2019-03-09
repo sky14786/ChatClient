@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 class Manager {
 	private ServerSocket serversocket;
@@ -13,36 +14,47 @@ class Manager {
 	private HashMap<Socket, String> hm;
 	private DataOutputStream output;
 	private DataInputStream input;
-	private String nickname, sendmessage, receivemessage;
+	private String nickname, sendmessage, receivemessage,identity;
 	private ArrayList<String> nicknames;
 	private Boolean isduplicate;
 	private ArrayList<DataInputStream> inputs;
 	private ArrayList<DataOutputStream> outputs;
+	private StringTokenizer temp;
 
-	public void PhysicalConnect() {
+//	public void PhysicalConnect() {
+//		try {
+//			serversocket = new ServerSocket(8000);
+//			while (true) {
+//				socket = serversocket.accept();
+//				input = new DataInputStream(socket.getInputStream());
+//				output = new DataOutputStream(socket.getOutputStream());
+//				nickname = input.readUTF();
+//				if (!DuplicateCheck()) {
+//					LogicalConnect();
+//				} else {
+//					sendmessage = "0000:nick_name Duplicate Error!";
+//					output.writeUTF(sendmessage + "\n");
+//					output.flush();
+//					socket.close();
+//				}
+//
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//
+//	}
+
+	public void Connect() {
 		try {
 			serversocket = new ServerSocket(8000);
-			while (true) {
-				socket = serversocket.accept();
-				input = new DataInputStream(socket.getInputStream());
-				output = new DataOutputStream(socket.getOutputStream());
-				nickname = input.readUTF();
-				if (!DuplicateCheck()) {
-					LogicalConnect();
-				} else {
-					sendmessage = isduplicate.toString();
-					output.writeUTF(sendmessage + "\n");
-					output.flush();
-					socket.close();
-				}
-
+			while(true) {
+				socket = 
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
-
 	}
-
+	
+	
 	public void LogicalConnect() {
 
 		try {
@@ -51,7 +63,7 @@ class Manager {
 			hm.put(socket, nickname);
 			inputs.add(input);
 			outputs.add(output);
-			sendmessage = isduplicate.toString();
+			sendmessage = "0001:Welcome to my ChatServer!";
 			output.writeUTF(sendmessage + "\n");
 			output.flush();
 		} catch (IOException e) {
