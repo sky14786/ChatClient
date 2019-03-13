@@ -72,11 +72,15 @@ class Manager {
 	public void ReceiveMessage() {
 		try {
 			while (true) {
-				receivemessage = input.readUTF();
-				StringTokenizer temp = new StringTokenizer(receivemessage, ":");
-				identity = temp.nextToken();
-				if (identity.equals("1000")) {
-					SendMessage(temp.nextToken());
+				for (int i = 0; i < inputs.size(); i++) {
+					input = new DataInputStream(clients.get(i).getInputStream());
+					receivemessage = input.readUTF();
+					System.out.println(receivemessage + "\n");
+					StringTokenizer temp = new StringTokenizer(receivemessage, ":");
+					identity = temp.nextToken();
+					if (identity.equals("1000")) {
+						SendMessage(receivemessage);
+					}
 				}
 			}
 		} catch (IOException e) {
@@ -88,7 +92,7 @@ class Manager {
 		sendmessage = msg;
 		for (int j = 0; j < clients.size(); j++) {
 			try {
-				outputs.get(j).writeUTF("1000:" + nickname + ":" + sendmessage);
+				outputs.get(j).writeUTF(sendmessage);
 				outputs.get(j).flush();
 			} catch (IOException e) {
 

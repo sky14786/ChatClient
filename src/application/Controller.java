@@ -42,6 +42,7 @@ public class Controller {
 			model.SetSocket(TFip.getText(), TFport.getText());
 			connectthread = new ConnectThread(this);
 			connectthread.run();
+			
 			BTNtoggle.setText("STOP");
 		} else {
 			Stop();

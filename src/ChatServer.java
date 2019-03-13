@@ -6,7 +6,6 @@ import java.net.Socket;
 
 public class ChatServer {
 	private static ConnectThread connectthread;
-//	private static ReceiveThread receivethread;
 	private static ServerSocket serversocket;
 	private static Socket socket;
 	private static Manager manager = new Manager();
