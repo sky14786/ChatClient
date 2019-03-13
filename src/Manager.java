@@ -8,17 +8,17 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 class Manager {
-	private ServerSocket serversocket;
+//	private ServerSocket serversocket;
 	private Socket socket;
-	private ArrayList<Socket> clients;
-	private HashMap<Socket, String> hm;
-	private DataOutputStream output;
+	private ArrayList<Socket> clients = new ArrayList<>();
+	private HashMap<Socket, String> hm = new HashMap<>();
+	private DataOutputStream output ;
 	private DataInputStream input;
 	private String nickname, sendmessage, receivemessage, identity;
-	private ArrayList<String> nicknames;
+	private ArrayList<String> nicknames = new ArrayList<>();
 	private Boolean isduplicate;
-	private ArrayList<DataInputStream> inputs;
-	private ArrayList<DataOutputStream> outputs;
+	private ArrayList<DataInputStream> inputs = new ArrayList<>() ;
+	private ArrayList<DataOutputStream> outputs = new ArrayList<>();
 	
 	
 	
@@ -108,6 +108,7 @@ class Manager {
 		for (int i = 0; i < nicknames.size(); i++) {
 			if (nicknames.get(i).equals(nickname)) {
 				isduplicate = true;
+				return isduplicate;
 			} else {
 				isduplicate = false;
 			}
@@ -143,9 +144,6 @@ class Manager {
 		}
 	}
 	
-	public void ResetVariables() {
-		nicknames = new ArrayList<>();
-		nicknames.add("..");
-	}
+	
 
 }

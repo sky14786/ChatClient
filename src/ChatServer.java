@@ -9,19 +9,16 @@ public class ChatServer {
 //	private static ReceiveThread receivethread;
 	private static ServerSocket serversocket;
 	private static Socket socket;
-	private static Manager manager;
+	private static Manager manager = new Manager();
 
 	public static void main(String[] args) {
 		try {
-			manager = new Manager();
-			manager.ResetVariables();
-//			receivethread = new ReceiveThread();
 			serversocket = new ServerSocket(8000);
 			while (true) {
 				socket = new Socket();
 				socket = serversocket.accept();
 				if(socket.isConnected()) {
-					connectthread = new ConnectThread(socket);
+					connectthread = new ConnectThread(socket,manager);
 					connectthread.run();
 				}
 			}
@@ -37,9 +34,10 @@ public class ChatServer {
 class ConnectThread extends Thread {
 	private Manager manager;
 	private Socket socket;
-	ConnectThread(Socket socket) {
-		manager = new Manager();
+	ConnectThread(Socket socket,Manager manager) {
+		this.manager = manager;
 		this.socket = socket;
+		
 	}
 
 	public void run() {
