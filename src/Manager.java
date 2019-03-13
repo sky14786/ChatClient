@@ -20,6 +20,8 @@ class Manager {
 	private ArrayList<DataInputStream> inputs;
 	private ArrayList<DataOutputStream> outputs;
 	
+	
+	
 
 	// public void PhysicalConnect() {
 	// try {
@@ -91,7 +93,7 @@ class Manager {
 			hm.put(socket, nickname);
 			inputs.add(input);
 			outputs.add(output);
-			sendmessage = "0001:Welcome to my ChatServer!";
+			sendmessage = "1000:Welcome to my ChatServer!";
 			output.writeUTF(sendmessage + "\n");
 			output.flush();
 		} catch (IOException e) {
@@ -139,6 +141,11 @@ class Manager {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public void ResetVariables() {
+		nicknames = new ArrayList<>();
+		nicknames.add("..");
 	}
 
 }

@@ -24,9 +24,9 @@ public class Model {
 			output.writeUTF("0000:"+nickname);
 			output.flush();
 			
-			while(socket.isConnected()) {
-				
-			}
+//			while(socket.isConnected()) {
+//				
+//			}
 
 
 		} catch (IOException e) {

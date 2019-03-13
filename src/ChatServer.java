@@ -6,18 +6,19 @@ import java.net.Socket;
 
 public class ChatServer {
 	private static ConnectThread connectthread;
-	private static ReceiveThread receivethread;
+//	private static ReceiveThread receivethread;
 	private static ServerSocket serversocket;
 	private static Socket socket;
-//	private static DataInputStream input;
-//	private static DataOutputStream output;
+	private static Manager manager;
 
 	public static void main(String[] args) {
 		try {
-			
-			receivethread = new ReceiveThread();
+			manager = new Manager();
+			manager.ResetVariables();
+//			receivethread = new ReceiveThread();
 			serversocket = new ServerSocket(8000);
 			while (true) {
+				socket = new Socket();
 				socket = serversocket.accept();
 				if(socket.isConnected()) {
 					connectthread = new ConnectThread(socket);
@@ -46,14 +47,14 @@ class ConnectThread extends Thread {
 	}
 }
 
-class ReceiveThread extends Thread {
-	private Manager manager;
-
-	ReceiveThread() {
-		manager = new Manager();
-	}
-
-	public void run() {
-		manager.ReceiveMessage();
-	}
-}
+//class ReceiveThread extends Thread {
+//	private Manager manager;
+//
+//	ReceiveThread() {
+//		manager = new Manager();
+//	}
+//
+//	public void run() {
+//		manager.ReceiveMessage();
+//	}
+//}
