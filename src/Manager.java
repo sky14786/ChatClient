@@ -12,16 +12,13 @@ class Manager {
 	private Socket socket;
 	private ArrayList<Socket> clients = new ArrayList<>();
 	private HashMap<Socket, String> hm = new HashMap<>();
-	private DataOutputStream output ;
+	private DataOutputStream output;
 	private DataInputStream input;
 	private String nickname, sendmessage, receivemessage, identity;
 	private ArrayList<String> nicknames = new ArrayList<>();
 	private Boolean isduplicate;
-	private ArrayList<DataInputStream> inputs = new ArrayList<>() ;
+	private ArrayList<DataInputStream> inputs = new ArrayList<>();
 	private ArrayList<DataOutputStream> outputs = new ArrayList<>();
-	
-	
-	
 
 	// public void PhysicalConnect() {
 	// try {
@@ -61,19 +58,19 @@ class Manager {
 			if (identity.equals("0000")) {
 				nickname = temp.nextToken();
 				if (!DuplicateCheck()) {
-					sendmessage = "1000:서버 접속 성공!\n";
+					sendmessage = "1000:SERVER:서버 접속 성공!";
 					output.writeUTF(sendmessage);
 					output.flush();
-					
+
 					clients.add(socket);
-					hm.put(socket,nickname);
+					hm.put(socket, nickname);
 					nicknames.add(nickname);
 					inputs.add(input);
 					outputs.add(output);
 
 					ReceiveMessage();
 				} else {
-					sendmessage = "1000:서버 접속 실패 ID 중복 오류! \n";
+					sendmessage = "1000:SERVER:서버 접속 실패 ID 중복 오류!";
 					output.writeUTF(sendmessage);
 					output.flush();
 					socket.close();
@@ -93,7 +90,7 @@ class Manager {
 			hm.put(socket, nickname);
 			inputs.add(input);
 			outputs.add(output);
-			sendmessage = "1000:Welcome to my ChatServer!";
+			sendmessage = "1000:SERVER:Welcome to my ChatServer!";
 			output.writeUTF(sendmessage + "\n");
 			output.flush();
 		} catch (IOException e) {
@@ -118,11 +115,11 @@ class Manager {
 
 	public void ReceiveMessage() {
 		try {
-			while((receivemessage = input.readUTF()) !=null) {
-				StringTokenizer temp = new StringTokenizer(receivemessage,":");
+			while (true) {
+				receivemessage = input.readUTF();
+				StringTokenizer temp = new StringTokenizer(receivemessage, ":");
 				identity = temp.nextToken();
-				
-				if(identity.equals("1000")) {
+				if (identity.equals("1000")) {
 					SendMessage(temp.nextToken());
 				}
 			}
@@ -132,10 +129,10 @@ class Manager {
 	}
 
 	public void SendMessage(String msg) {
-		sendmessage = msg + "\n";
+		sendmessage = msg;
 		for (int j = 0; j < clients.size(); j++) {
 			try {
-				outputs.get(j).writeUTF("1000:"+nickname+": "+sendmessage);
+				outputs.get(j).writeUTF("1000:" + nickname + ":" + sendmessage);
 				outputs.get(j).flush();
 			} catch (IOException e) {
 
@@ -143,7 +140,5 @@ class Manager {
 			}
 		}
 	}
-	
-	
 
 }

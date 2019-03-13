@@ -1,5 +1,12 @@
 package application;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.StringTokenizer;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -7,8 +14,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class Controller {
-	
-	Model model = new Model();
 
 	@FXML
 	private TextArea TAdisplay;
@@ -17,6 +22,119 @@ public class Controller {
 	@FXML
 	private Button BTNtoggle, BTNsned;
 
+	private Socket socket;
+	private String sendmessage = new String();
+	private DataInputStream input;
+	private DataOutputStream output;
+	private StringTokenizer temp;
+	private String identity = new String();
+	private String receivemessage = new String();
+	private String sender = new String();
 
+	private Model model = new Model();
 
+	private ConnectThread connectthread;
+
+	@FXML
+	public void StartStop(ActionEvent e) {
+		if (BTNtoggle.getText().equals("START")) {
+			model.SetNickName(TFnick.getText());
+			model.SetSocket(TFip.getText(), TFport.getText());
+			connectthread = new ConnectThread(this);
+			connectthread.run();
+			BTNtoggle.setText("STOP");
+		} else {
+			Stop();
+			TAdisplay.appendText("Connect Close..\n");
+			BTNtoggle.setText("START");
+
+		}
+	}
+
+	@FXML
+	public void SendMessage() {
+		if (TFinput.getText() != null) {
+			Send(TFinput.getText());
+			TFinput.setText("");
+		}
+	}
+
+	@FXML
+	public void DisplayAppend() {
+		TAdisplay.appendText(sender + " : " + receivemessage + "\n");
+	}
+
+	public void Start() {
+		try {
+			String nickname = model.GetNickNmae();
+			String ip = model.GetIP();
+			int port = Integer.parseInt(model.GetPort());
+
+			socket = new Socket(ip, port);
+			if (socket.isConnected()) {
+				input = new DataInputStream(socket.getInputStream());
+				output = new DataOutputStream(socket.getOutputStream());
+				sendmessage = "0000:" + nickname;
+				output.writeUTF(sendmessage);
+				output.flush();
+
+				while (true) {
+					String temp2 = input.readUTF();
+					if (temp2 != null) {
+						temp = new StringTokenizer(temp2, ":");
+						identity = temp.nextToken();
+						if (identity.equals("1000")) {
+							sender = temp.nextToken();
+							receivemessage = temp.nextToken();
+							DisplayAppend();
+						}
+					}
+
+				}
+
+			} else {
+				TAdisplay.appendText("Server Connect Fail!");
+				socket.close();
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void Stop() {
+		try {
+			input.close();
+			output.close();
+			socket.close();
+			connectthread.stop();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void Send(String msg) {
+		try {
+			sendmessage = "1000:" + model.GetNickNmae() + ":" + msg;
+			output.writeUTF(sendmessage);
+			output.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+}
+
+class ConnectThread extends Thread {
+	Controller controller = new Controller();
+
+	ConnectThread(Controller c) {
+		controller = c;
+	}
+
+	public void run() {
+		controller.Start();
+	}
 }

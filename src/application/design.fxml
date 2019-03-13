@@ -27,13 +27,13 @@
       <TextArea fx:id="TAdisplay" editable="false" prefHeight="332.0" prefWidth="640.0" />
       <HBox prefHeight="38.0" prefWidth="640.0">
          <children>
-            <Button fx:id="BTNtoggle" mnemonicParsing="false" prefHeight="72.0" prefWidth="95.0" text="START" textAlignment="CENTER" onAction="#Start_Stop">
+            <Button fx:id="BTNtoggle" mnemonicParsing="false" prefHeight="72.0" prefWidth="95.0" text="START" textAlignment="CENTER" onAction="#StartStop">
                <HBox.margin>
                   <Insets right="10.0" />
                </HBox.margin>
             </Button>
             <TextField fx:id="TFinput" prefHeight="73.0" prefWidth="426.0" promptText="Input_Message"/>
-            <Button fx:id="BTNsend" mnemonicParsing="false" prefHeight="40.0" prefWidth="117.0" text="SEND" onAction="#Send_Message">
+            <Button fx:id="BTNsend" mnemonicParsing="false" prefHeight="40.0" prefWidth="117.0" text="SEND" onAction="#SendMessage">
                <HBox.margin>
                   <Insets left="10.0" />
                </HBox.margin>
