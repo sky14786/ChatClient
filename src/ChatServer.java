@@ -17,8 +17,8 @@ public class ChatServer {
 			while (true) {
 				socket = new Socket();
 				socket = serversocket.accept();
-				if(socket.isConnected()) {
-					connectthread = new ConnectThread(socket,manager);
+				if (socket.isConnected()) {
+					connectthread = new ConnectThread(socket, manager);
 					connectthread.run();
 				}
 			}
@@ -34,25 +34,14 @@ public class ChatServer {
 class ConnectThread extends Thread {
 	private Manager manager;
 	private Socket socket;
-	ConnectThread(Socket socket,Manager manager) {
+
+	ConnectThread(Socket socket, Manager manager) {
 		this.manager = manager;
 		this.socket = socket;
-		
+
 	}
 
 	public void run() {
 		manager.Connect(socket);
 	}
 }
-
-//class ReceiveThread extends Thread {
-//	private Manager manager;
-//
-//	ReceiveThread() {
-//		manager = new Manager();
-//	}
-//
-//	public void run() {
-//		manager.ReceiveMessage();
-//	}
-//}

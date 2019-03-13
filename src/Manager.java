@@ -56,7 +56,6 @@ class Manager {
 		}
 	}
 
-
 	public Boolean DuplicateCheck() {
 		isduplicate = false;
 		for (int i = 0; i < nicknames.size(); i++) {
