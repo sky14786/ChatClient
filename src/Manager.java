@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.StringTokenizer;
 
 class Manager {
-//	private ServerSocket serversocket;
 	private Socket socket;
 	private ArrayList<Socket> clients = new ArrayList<>();
 	private HashMap<Socket, String> hm = new HashMap<>();
@@ -20,35 +19,10 @@ class Manager {
 	private ArrayList<DataInputStream> inputs = new ArrayList<>();
 	private ArrayList<DataOutputStream> outputs = new ArrayList<>();
 
-	// public void PhysicalConnect() {
-	// try {
-	// serversocket = new ServerSocket(8000);
-	// while (true) {
-	// socket = serversocket.accept();
-	// input = new DataInputStream(socket.getInputStream());
-	// output = new DataOutputStream(socket.getOutputStream());
-	// nickname = input.readUTF();
-	// if (!DuplicateCheck()) {
-	// LogicalConnect();
-	// } else {
-	// sendmessage = "0000:nick_name Duplicate Error!";
-	// output.writeUTF(sendmessage + "\n");
-	// output.flush();
-	// socket.close();
-	// }
-	//
-	// }
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	//
-	// }
-
 	// 1000 일반 메시지 0000 접속시도
 	public void Connect(Socket soc) {
 		StringTokenizer temp;
 		try {
-//			serversocket = new ServerSocket(8000);
 			socket = soc;
 			input = new DataInputStream(socket.getInputStream());
 			output = new DataOutputStream(socket.getOutputStream());
@@ -82,23 +56,6 @@ class Manager {
 		}
 	}
 
-	public void LogicalConnect() {
-
-		try {
-			clients.add(socket);
-			nicknames.add(nickname);
-			hm.put(socket, nickname);
-			inputs.add(input);
-			outputs.add(output);
-			sendmessage = "1000:SERVER:Welcome to my ChatServer!";
-			output.writeUTF(sendmessage + "\n");
-			output.flush();
-		} catch (IOException e) {
-
-			e.printStackTrace();
-		}
-
-	}
 
 	public Boolean DuplicateCheck() {
 		isduplicate = false;
