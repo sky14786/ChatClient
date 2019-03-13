@@ -21,19 +21,13 @@ public class Model {
 			input = new DataInputStream(socket.getInputStream());
 			output = new DataOutputStream(socket.getOutputStream());
 
-			output.writeUTF(nickname);
+			output.writeUTF("0000:"+nickname);
 			output.flush();
-
-			while (true) {
-				msg = new StringTokenizer(input.readUTF(), ":");
-				identity = msg.nextToken();
-				if (identity.equals("0001")) {
-					SetReceiveMessage(msg.nextToken());
-				} else if (identity.equals("0000")) {
-
-				}
-
+			
+			while(socket.isConnected()) {
+				
 			}
+
 
 		} catch (IOException e) {
 
@@ -54,7 +48,7 @@ public class Model {
 	public void SendMessage(String msg) {
 
 		try {
-			sendmessage = "1001:" + msg + "\n";
+			sendmessage = "1000:" + msg + "\n";
 			output.writeUTF(sendmessage);
 			output.flush();
 		} catch (IOException e) {

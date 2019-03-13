@@ -14,47 +14,75 @@ class Manager {
 	private HashMap<Socket, String> hm;
 	private DataOutputStream output;
 	private DataInputStream input;
-	private String nickname, sendmessage, receivemessage,identity;
+	private String nickname, sendmessage, receivemessage, identity;
 	private ArrayList<String> nicknames;
 	private Boolean isduplicate;
 	private ArrayList<DataInputStream> inputs;
 	private ArrayList<DataOutputStream> outputs;
-	private StringTokenizer temp;
+	
 
-//	public void PhysicalConnect() {
-//		try {
-//			serversocket = new ServerSocket(8000);
-//			while (true) {
-//				socket = serversocket.accept();
-//				input = new DataInputStream(socket.getInputStream());
-//				output = new DataOutputStream(socket.getOutputStream());
-//				nickname = input.readUTF();
-//				if (!DuplicateCheck()) {
-//					LogicalConnect();
-//				} else {
-//					sendmessage = "0000:nick_name Duplicate Error!";
-//					output.writeUTF(sendmessage + "\n");
-//					output.flush();
-//					socket.close();
-//				}
-//
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//
-//	}
+	// public void PhysicalConnect() {
+	// try {
+	// serversocket = new ServerSocket(8000);
+	// while (true) {
+	// socket = serversocket.accept();
+	// input = new DataInputStream(socket.getInputStream());
+	// output = new DataOutputStream(socket.getOutputStream());
+	// nickname = input.readUTF();
+	// if (!DuplicateCheck()) {
+	// LogicalConnect();
+	// } else {
+	// sendmessage = "0000:nick_name Duplicate Error!";
+	// output.writeUTF(sendmessage + "\n");
+	// output.flush();
+	// socket.close();
+	// }
+	//
+	// }
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// }
 
-	public void Connect() {
+	// 1000 일반 메시지 0000 접속시도
+	public void Connect(Socket soc) {
+		StringTokenizer temp;
 		try {
-			serversocket = new ServerSocket(8000);
-			while(true) {
-				socket = 
+//			serversocket = new ServerSocket(8000);
+			socket = soc;
+			input = new DataInputStream(socket.getInputStream());
+			output = new DataOutputStream(socket.getOutputStream());
+
+			temp = new StringTokenizer(input.readUTF(), ":");
+			identity = temp.nextToken();
+			if (identity.equals("0000")) {
+				nickname = temp.nextToken();
+				if (!DuplicateCheck()) {
+					sendmessage = "1000:서버 접속 성공!\n";
+					output.writeUTF(sendmessage);
+					output.flush();
+					
+					clients.add(socket);
+					hm.put(socket,nickname);
+					nicknames.add(nickname);
+					inputs.add(input);
+					outputs.add(output);
+
+					ReceiveMessage();
+				} else {
+					sendmessage = "1000:서버 접속 실패 ID 중복 오류! \n";
+					output.writeUTF(sendmessage);
+					output.flush();
+					socket.close();
+				}
 			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
-	
-	
+
 	public void LogicalConnect() {
 
 		try {
@@ -86,18 +114,17 @@ class Manager {
 	}
 
 	public void ReceiveMessage() {
-		while (true) {
-			for (int i = 0; i < clients.size(); i++) {
-				try {
-					if (inputs.get(i).readUTF() != null) {
-						receivemessage = inputs.get(i).readUTF();
-						SendMessage(receivemessage);
-					}
-				} catch (IOException e) {
-
-					e.printStackTrace();
+		try {
+			while((receivemessage = input.readUTF()) !=null) {
+				StringTokenizer temp = new StringTokenizer(receivemessage,":");
+				identity = temp.nextToken();
+				
+				if(identity.equals("1000")) {
+					SendMessage(temp.nextToken());
 				}
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -105,7 +132,7 @@ class Manager {
 		sendmessage = msg + "\n";
 		for (int j = 0; j < clients.size(); j++) {
 			try {
-				outputs.get(j).writeUTF(sendmessage);
+				outputs.get(j).writeUTF("1000:"+nickname+": "+sendmessage);
 				outputs.get(j).flush();
 			} catch (IOException e) {
 
