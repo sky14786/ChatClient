@@ -54,11 +54,12 @@ public class Controller {
 
 	@FXML
 	public void SendMessage() {
-		if (TFinput.getText() != null) {
+		if (TFinput.getText().length() != 0) {
 			Send(TFinput.getText());
 			TFinput.setText("");
 		}
 	}
+
 
 	@FXML
 	public void DisplayAppend() {
@@ -117,6 +118,7 @@ public class Controller {
 
 	public void Send(String msg) {
 		try {
+			
 			sendmessage = "1000:" + model.GetNickNmae() + ":" + msg;
 			output.writeUTF(sendmessage);
 			output.flush();
