@@ -41,8 +41,8 @@ public class Controller {
 			model.SetNickName(TFnick.getText());
 			model.SetSocket(TFip.getText(), TFport.getText());
 			connectthread = new ConnectThread(this);
-			connectthread.run();
-			
+			connectthread.start();
+
 			BTNtoggle.setText("STOP");
 		} else {
 			Stop();
@@ -90,7 +90,6 @@ public class Controller {
 							DisplayAppend();
 						}
 					}
-
 				}
 
 			} else {

@@ -18,7 +18,7 @@ public class ChatServer {
 				socket = serversocket.accept();
 				if (socket.isConnected()) {
 					connectthread = new ConnectThread(socket, manager);
-					connectthread.run();
+					connectthread.start();
 				}
 			}
 
