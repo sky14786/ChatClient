@@ -36,11 +36,14 @@ class Manager {
 					output.writeUTF(sendmessage);
 					output.flush();
 
-					clients.add(socket);
-					hm.put(socket, nickname);
-					nicknames.add(nickname);
-					inputs.add(input);
-					outputs.add(output);
+					synchronized (this) {
+						clients.add(socket);
+						inputs.add(input);
+						outputs.add(output);
+						hm.put(socket, nickname);
+						nicknames.add(nickname);
+						
+					}
 
 					ReceiveMessage();
 				} else {
@@ -72,17 +75,15 @@ class Manager {
 	public void ReceiveMessage() {
 		try {
 			while (true) {
-				for (int i = 0; i < inputs.size(); i++) {
-					input = new DataInputStream(clients.get(i).getInputStream());
-					receivemessage = input.readUTF();
-					System.out.println(receivemessage + "\n");
-					StringTokenizer temp = new StringTokenizer(receivemessage, ":");
-					identity = temp.nextToken();
-					if (identity.equals("1000")) {
-						SendMessage(receivemessage);
-					}
+				receivemessage = input.readUTF();
+				System.out.println(receivemessage + "\n");
+				StringTokenizer temp = new StringTokenizer(receivemessage, ":");
+				identity = temp.nextToken();
+				if (identity.equals("1000")) {
+					SendMessage(receivemessage);
 				}
 			}
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

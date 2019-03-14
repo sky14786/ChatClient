@@ -5,10 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class ChatServer {
-	private static ConnectThread connectthread;
+
 	private static ServerSocket serversocket;
 	private static Socket socket;
 	private static Manager manager = new Manager();
+	private static ConnectThread connectthread;
 
 	public static void main(String[] args) {
 		try {
