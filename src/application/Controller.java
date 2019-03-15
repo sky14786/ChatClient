@@ -1,7 +1,15 @@
 package application;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.StringTokenizer;
@@ -11,6 +19,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import javafx.stage.Window;
 
 public class Controller {
 
@@ -19,7 +29,7 @@ public class Controller {
 	@FXML
 	private TextField TFport, TFip, TFnick, TFinput;
 	@FXML
-	private Button BTNtoggle, BTNsned;
+	private Button BTNtoggle, BTNsned, BTNfile;
 
 	private Socket socket;
 	private String sendmessage = new String();
@@ -62,10 +72,10 @@ public class Controller {
 			if (mode.equals("/to")) {
 				receiver = temp2.nextToken();
 				msg = temp2.nextToken();
-				WhisperSend(receiver,msg);
-				TAdisplay.appendText("[To]"+receiver+" : "+msg+"\n");
-				TFinput.setText(mode+" "+receiver+" ");
-				
+				WhisperSend(receiver, msg);
+				TAdisplay.appendText("[To]" + receiver + " : " + msg + "\n");
+				TFinput.setText(mode + " " + receiver + " ");
+
 			}
 
 			else {
@@ -74,6 +84,15 @@ public class Controller {
 			}
 
 		}
+	}
+
+	@FXML
+	private void FileSearch() {
+		FileChooser fileChooser = new FileChooser();
+		Window stage = null;
+		File file = fileChooser.showOpenDialog(stage);
+		FileSend(file);
+
 	}
 
 	@FXML
@@ -104,11 +123,16 @@ public class Controller {
 							sender = temp.nextToken();
 							receivemessage = temp.nextToken();
 							DisplayAppend(sender + " : " + receivemessage + "\n");
-						}
-						else if(identity.equals("1100")) {
+						} else if (identity.equals("1100")) {
 							sender = temp.nextToken();
+							String tem = temp.nextToken();
 							receivemessage = temp.nextToken();
-							DisplayAppend("[From]"+sender+" : "+receivemessage+"\n");
+							DisplayAppend("[From]" + sender + " : " + receivemessage + "\n");
+						} else if (identity.equals("1001")) {
+							sender = temp.nextToken();
+							String filename = temp.nextToken();
+							DisplayAppend(sender + " ´ÔÀÌ " + filename + " À» º¸³»¼Ì½À´Ï´Ù.\n");
+							FileReceiver(filename);
 						}
 					}
 				}
@@ -144,15 +168,63 @@ public class Controller {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
 
+	public void FileSend(File file) {
+		try {
+			sendmessage = "1001:" + model.GetNickNmae() + ":" + file.getName();
+			output.writeUTF(sendmessage);
+			output.flush();
+
+			BufferedOutputStream buout = new BufferedOutputStream(socket.getOutputStream());
+			FileInputStream fin = new FileInputStream(file);
+//			BufferedInputStream buin = new BufferedInputStream(fin);
+			byte[] buffer = new byte[8096];
+			int len;
+			int data = 0;
+
+			while ((len = fin.read(buffer)) != -1) {
+				buout.write(buffer, 0, len);
+			}
+
+			buout.flush();
+			buout.close();
+			fin.close();
+
+			DisplayAppend(file.getName() + "À» º¸³Â½À´Ï´Ù.");
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void WhisperSend(String receiver, String msg) {
 		try {
-			sendmessage = "1100:"+model.GetNickNmae()+":"+receiver+":"+msg;
+			sendmessage = "1100:" + model.GetNickNmae() + ":" + receiver + ":" + msg;
 			output.writeUTF(sendmessage);
 			output.flush();
-		} catch(IOException e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void FileReceiver(String filename) {
+		try {
+			BufferedInputStream buin = new BufferedInputStream(socket.getInputStream());
+			FileOutputStream fout = new FileOutputStream(filename);
+			int len;
+			byte[] buffer = new byte[8096];
+
+			while ((len = buin.read(buffer)) != -1) {
+				fout.write(buffer, 0, len);
+			}
+
+			fout.flush();
+			fout.close();
+			buin.close();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
