@@ -37,6 +37,8 @@ public class Controller {
 	private String identity = new String();
 	private String receivemessage = new String();
 	private String sender = new String();
+	private boolean iswhisper;
+	private String receiver;
 
 	private Model model = new Model();
 
@@ -61,7 +63,6 @@ public class Controller {
 
 	@FXML
 	public void SendMessage() {
-		String receiver;
 		String mode;
 		String msg;
 		if (TFinput.getText().length() != 0) {
@@ -74,9 +75,11 @@ public class Controller {
 				TAdisplay.appendText("[To]" + receiver + " : " + msg + "\n");
 				TFinput.setText(mode + " " + receiver + " ");
 
-			}
-
-			else {
+			} else if (mode.equals("/tofile")) {
+				receiver = temp2.nextToken();
+				iswhisper = true;
+				FileSearch();
+			} else {
 				Send(TFinput.getText());
 				TFinput.setText("");
 			}
@@ -86,16 +89,20 @@ public class Controller {
 
 	@FXML
 	private void FileSearch() {
-		FileChooser fileChooser = new FileChooser();
-		Window stage = null;
-		File file = fileChooser.showOpenDialog(stage);
-		FileSend(file);
-
+		FileChooser();
 	}
 
 	@FXML
 	public void DisplayAppend(String msg) {
 		TAdisplay.appendText(msg);
+	}
+
+	public void FileChooser() {
+		FileChooser filechooser = new FileChooser();
+		Window stage = null;
+		File file = filechooser.showOpenDialog(stage);
+		FileThread filethread = new FileThread(this, file, iswhisper, receiver);
+		filethread.start();
 	}
 
 	public void Start() {
@@ -130,7 +137,16 @@ public class Controller {
 							sender = temp.nextToken();
 							String filename = temp.nextToken();
 							DisplayAppend(sender + " 님이 " + filename + " 을 보내셨습니다.\n");
-							FileReceiver(filename);
+//							FileReceiver(filename);
+							FileReceiverThread filereceiverthread = new FileReceiverThread(this, filename);
+							filereceiverthread.start();
+						} else if (identity.equals("1101")) {
+							sender = temp.nextToken();
+							String filename = temp.nextToken();
+							DisplayAppend("[From]" + sender + " : " + filename + " 을 보내셨습니다.\n");
+//							FileReceiver(filename);
+							FileReceiverThread filereceiverthread = new FileReceiverThread(this, filename);
+							filereceiverthread.start();
 						}
 					}
 				}
@@ -168,18 +184,21 @@ public class Controller {
 		}
 	}
 
-	public void FileSend(File file) {
+	public void FileSend(File file, boolean iswhisper, String receiver) {
 		try {
-			sendmessage = "1001:" + model.GetNickNmae() + ":" + file.getName();
+			if (iswhisper) {
+				sendmessage = "1101:" + model.GetNickNmae() + ":" + file.getName() + ":" + receiver;
+			} else {
+				sendmessage = "1001:" + model.GetNickNmae() + ":" + file.getName();
+			}
+
 			output.writeUTF(sendmessage);
 			output.flush();
 
 			BufferedOutputStream buout = new BufferedOutputStream(socket.getOutputStream());
 			FileInputStream fin = new FileInputStream(file);
-//			BufferedInputStream buin = new BufferedInputStream(fin);
 			byte[] buffer = new byte[8096];
 			int len;
-			int data = 0;
 
 			while ((len = fin.read(buffer)) != -1) {
 				buout.write(buffer, 0, len);
@@ -188,8 +207,12 @@ public class Controller {
 			buout.flush();
 			buout.close();
 			fin.close();
-
-			DisplayAppend(file.getName() + "을 보냈습니다.");
+			output.close();
+			if (iswhisper) {
+				DisplayAppend("[To]" + receiver + ":" + file.getName());
+			} else {
+				DisplayAppend(file.getName() + "을 보냈습니다.");
+			}
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -222,6 +245,8 @@ public class Controller {
 			fout.flush();
 			fout.close();
 			buin.close();
+			input.close();
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -238,4 +263,37 @@ class ConnectThread extends Thread {
 	public void run() {
 		controller.Start();
 	}
+}
+
+class FileThread extends Thread {
+	Controller controller = new Controller();
+	File file;
+	boolean iswhisper;
+	String receiver;
+
+	FileThread(Controller c, File file, boolean iswhisper, String receiver) {
+		controller = c;
+		this.file = file;
+		this.iswhisper = iswhisper;
+		this.receiver = receiver;
+	}
+
+	public void run() {
+		controller.FileSend(file, iswhisper, receiver);
+	}
+}
+
+class FileReceiverThread extends Thread {
+	Controller controller = new Controller();
+	String filename;
+
+	FileReceiverThread(Controller c, String filename) {
+		controller = c;
+		this.filename = filename;
+	}
+
+	public void run() {
+		controller.FileReceiver(filename);
+	}
+
 }
