@@ -53,16 +53,32 @@ public class Controller {
 
 	@FXML
 	public void SendMessage() {
+		String receiver;
+		String mode;
+		String msg;
 		if (TFinput.getText().length() != 0) {
-			Send(TFinput.getText());
-			TFinput.setText("");
+			StringTokenizer temp2 = new StringTokenizer(TFinput.getText(), " ");
+			mode = temp2.nextToken();
+			if (mode.equals("/to")) {
+				receiver = temp2.nextToken();
+				msg = temp2.nextToken();
+				WhisperSend(receiver,msg);
+				TAdisplay.appendText("[To]"+receiver+" : "+msg+"\n");
+				TFinput.setText(mode+" "+receiver+" ");
+				
+			}
+
+			else {
+				Send(TFinput.getText());
+				TFinput.setText("");
+			}
+
 		}
 	}
 
-
 	@FXML
-	public void DisplayAppend() {
-		TAdisplay.appendText(sender + " : " + receivemessage + "\n");
+	public void DisplayAppend(String msg) {
+		TAdisplay.appendText(msg);
 	}
 
 	public void Start() {
@@ -87,7 +103,12 @@ public class Controller {
 						if (identity.equals("1000")) {
 							sender = temp.nextToken();
 							receivemessage = temp.nextToken();
-							DisplayAppend();
+							DisplayAppend(sender + " : " + receivemessage + "\n");
+						}
+						else if(identity.equals("1100")) {
+							sender = temp.nextToken();
+							receivemessage = temp.nextToken();
+							DisplayAppend("[From]"+sender+" : "+receivemessage+"\n");
 						}
 					}
 				}
@@ -117,7 +138,6 @@ public class Controller {
 
 	public void Send(String msg) {
 		try {
-			
 			sendmessage = "1000:" + model.GetNickNmae() + ":" + msg;
 			output.writeUTF(sendmessage);
 			output.flush();
@@ -125,6 +145,16 @@ public class Controller {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void WhisperSend(String receiver, String msg) {
+		try {
+			sendmessage = "1100:"+model.GetNickNmae()+":"+receiver+":"+msg;
+			output.writeUTF(sendmessage);
+			output.flush();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
 
