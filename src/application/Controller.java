@@ -23,100 +23,100 @@ import javafx.stage.Window;
 public class Controller {
 
 	@FXML
-	private TextArea TAdisplay;
+	private TextArea taDisplay;
 	@FXML
-	private TextField TFport, TFip, TFnick, TFinput;
+	private TextField tfPort, tfIp, tfNick, tfInput;
 	@FXML
-	private Button BTNtoggle, BTNsned, BTNfile;
+	private Button btnToggle, btnSend, btnFile;
 
 	private Socket socket;
-	private String sendmessage = new String();
+	private String sendMessage = new String();
 	private DataInputStream input;
 	private DataOutputStream output;
 	private StringTokenizer temp;
 	private String identity = new String();
-	private String receivemessage = new String();
+	private String receiveMessage = new String();
 	private String sender = new String();
-	private boolean iswhisper;
+	private boolean isWhisper;
 	private String receiver;
 
 	private Model model = new Model();
 
-	private ConnectThread connectthread;
+	private connectThread connectThread;
 
 	@FXML
-	public void StartStop(ActionEvent e) {
-		if (BTNtoggle.getText().equals("START")) {
-			model.SetNickName(TFnick.getText());
-			model.SetSocket(TFip.getText(), TFport.getText());
-			connectthread = new ConnectThread(this);
-			connectthread.start();
+	public void startStop(ActionEvent e) {
+		if (btnToggle.getText().equals("START")) {
+			model.setNickName(tfNick.getText());
+			model.setSocket(tfIp.getText(), tfPort.getText());
+			connectThread = new connectThread(this);
+			connectThread.start();
 
-			BTNtoggle.setText("STOP");
+			btnToggle.setText("STOP");
 		} else {
 			Stop();
-			TAdisplay.appendText("Connect Close..\n");
-			BTNtoggle.setText("START");
+			taDisplay.appendText("Connect Close..\n");
+			btnToggle.setText("START");
 
 		}
 	}
 
 	@FXML
-	public void SendMessage() {
+	public void sendMessage() {
 		String mode;
 		String msg;
-		if (TFinput.getText().length() != 0) {
-			StringTokenizer temp2 = new StringTokenizer(TFinput.getText(), " ");
+		if (tfInput.getText().length() != 0) {
+			StringTokenizer temp2 = new StringTokenizer(tfInput.getText(), " ");
 			mode = temp2.nextToken();
 			if (mode.equals("/to")) {
 				receiver = temp2.nextToken();
 				msg = temp2.nextToken();
-				WhisperSend(receiver, msg);
-				TAdisplay.appendText("[To]" + receiver + " : " + msg + "\n");
-				TFinput.setText(mode + " " + receiver + " ");
+				whisperSend(receiver, msg);
+				taDisplay.appendText("[To]" + receiver + " : " + msg + "\n");
+				tfInput.setText(mode + " " + receiver + " ");
 
 			} else if (mode.equals("/tofile")) {
 				receiver = temp2.nextToken();
-				iswhisper = true;
-				FileSearch();
+				isWhisper = true;
+				fileSearch();
 			} else {
-				Send(TFinput.getText());
-				TFinput.setText("");
+				send(tfInput.getText());
+				tfInput.setText("");
 			}
 
 		}
 	}
 
 	@FXML
-	private void FileSearch() {
-		FileChooser();
+	private void fileSearch() {
+		fileChooser();
 	}
 
 	@FXML
-	public void DisplayAppend(String msg) {
-		TAdisplay.appendText(msg);
+	public void displayAppend(String msg) {
+		taDisplay.appendText(msg);
 	}
 
-	public void FileChooser() {
-		FileChooser filechooser = new FileChooser();
+	public void fileChooser() {
+		fileChooser fileChooser = new fileChooser();
 		Window stage = null;
-		File file = filechooser.showOpenDialog(stage);
-		FileThread filethread = new FileThread(this, file, iswhisper, receiver);
-		filethread.start();
+		File file = fileChooser.showOpenDialog(stage);
+		fileThread fileThread = new fileThread(this, file, isWhisper, receiver);
+		fileThread.start();
 	}
 
-	public void Start() {
+	public void start() {
 		try {
-			String nickname = model.GetNickNmae();
-			String ip = model.GetIP();
-			int port = Integer.parseInt(model.GetPort());
+			String nickName = model.getNickNmae();
+			String ip = model.getIP();
+			int port = Integer.parseInt(model.getPort());
 
 			socket = new Socket(ip, port);
 			if (socket.isConnected()) {
 				input = new DataInputStream(socket.getInputStream());
 				output = new DataOutputStream(socket.getOutputStream());
-				sendmessage = "0000:" + nickname;
-				output.writeUTF(sendmessage);
+				sendMessage = "0000:" + nickName;
+				output.writeUTF(sendMessage);
 				output.flush();
 
 				while (true) {
@@ -126,33 +126,33 @@ public class Controller {
 						identity = temp.nextToken();
 						if (identity.equals("1000")) {
 							sender = temp.nextToken();
-							receivemessage = temp.nextToken();
-							DisplayAppend(sender + " : " + receivemessage + "\n");
+							receiveMessage = temp.nextToken();
+							displayAppend(sender + " : " + receiveMessage + "\n");
 						} else if (identity.equals("1100")) {
 							sender = temp.nextToken();
 							String tem = temp.nextToken();
-							receivemessage = temp.nextToken();
-							DisplayAppend("[From]" + sender + " : " + receivemessage + "\n");
+							receiveMessage = temp.nextToken();
+							displayAppend("[From]" + sender + " : " + receiveMessage + "\n");
 						} else if (identity.equals("1001")) {
 							sender = temp.nextToken();
-							String filename = temp.nextToken();
-							DisplayAppend(sender + " 님이 " + filename + " 을 보내셨습니다.\n");
+							String fileName = temp.nextToken();
+							displayAppend(sender + " 님이 " + fileName + " 을 보내셨습니다.\n");
 //							FileReceiver(filename);
-							FileReceiverThread filereceiverthread = new FileReceiverThread(this, filename);
-							filereceiverthread.start();
+							fileReceiverThread fileReceiverThread = new fileReceiverThread(this, fileName);
+							fileReceiverThread.start();
 						} else if (identity.equals("1101")) {
 							sender = temp.nextToken();
-							String filename = temp.nextToken();
-							DisplayAppend("[From]" + sender + " : " + filename + " 을 보내셨습니다.\n");
+							String fileName = temp.nextToken();
+							displayAppend("[From]" + sender + " : " + fileName + " 을 보내셨습니다.\n");
 //							FileReceiver(filename);
-							FileReceiverThread filereceiverthread = new FileReceiverThread(this, filename);
-							filereceiverthread.start();
+							fileReceiverThread fileReceiverThread = new fileReceiverThread(this, fileName);
+							fileReceiverThread.start();
 						}
 					}
 				}
 
 			} else {
-				TAdisplay.appendText("Server Connect Fail!");
+				taDisplay.appendText("Server Connect Fail!");
 				socket.close();
 			}
 
@@ -162,37 +162,37 @@ public class Controller {
 
 	}
 
-	public void Stop() {
+	public void stop() {
 		try {
 			input.close();
 			output.close();
 			socket.close();
-			connectthread.stop();
+			connectThread.stop();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 	}
 
-	public void Send(String msg) {
+	public void send(String msg) {
 		try {
-			sendmessage = "1000:" + model.GetNickNmae() + ":" + msg;
-			output.writeUTF(sendmessage);
+			sendMessage = "1000:" + model.getNickNmae() + ":" + msg;
+			output.writeUTF(sendMessage);
 			output.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void FileSend(File file, boolean iswhisper, String receiver) {
+	public void fileSend(File file, boolean isWhisper, String receiver) {
 		try {
-			if (iswhisper) {
-				sendmessage = "1101:" + model.GetNickNmae() + ":" + file.getName() + ":" + receiver;
+			if (isWhisper) {
+				sendMessage = "1101:" + model.getNickNmae() + ":" + file.getName() + ":" + receiver;
 			} else {
-				sendmessage = "1001:" + model.GetNickNmae() + ":" + file.getName();
+				sendMessage = "1001:" + model.getNickNmae() + ":" + file.getName();
 			}
 
-			output.writeUTF(sendmessage);
+			output.writeUTF(sendMessage);
 			output.flush();
 
 			BufferedOutputStream buout = new BufferedOutputStream(socket.getOutputStream());
@@ -208,10 +208,10 @@ public class Controller {
 			buout.close();
 			fin.close();
 			output.close();
-			if (iswhisper) {
-				DisplayAppend("[To]" + receiver + ":" + file.getName());
+			if (isWhisper) {
+				displayAppend("[To]" + receiver + ":" + file.getName());
 			} else {
-				DisplayAppend(file.getName() + "을 보냈습니다.");
+				displayAppend(file.getName() + "을 보냈습니다.");
 			}
 
 		} catch (FileNotFoundException e) {
@@ -221,20 +221,20 @@ public class Controller {
 		}
 	}
 
-	public void WhisperSend(String receiver, String msg) {
+	public void whisperSend(String receiver, String msg) {
 		try {
-			sendmessage = "1100:" + model.GetNickNmae() + ":" + receiver + ":" + msg;
-			output.writeUTF(sendmessage);
+			sendMessage = "1100:" + model.getNickNmae() + ":" + receiver + ":" + msg;
+			output.writeUTF(sendMessage);
 			output.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void FileReceiver(String filename) {
+	public void fileReceiver(String fileName) {
 		try {
 			BufferedInputStream buin = new BufferedInputStream(socket.getInputStream());
-			FileOutputStream fout = new FileOutputStream(filename);
+			FileOutputStream fout = new FileOutputStream(fileName);
 			int len;
 			byte[] buffer = new byte[8096];
 
@@ -253,47 +253,47 @@ public class Controller {
 	}
 }
 
-class ConnectThread extends Thread {
+class connectThread extends Thread {
 	Controller controller = new Controller();
 
-	ConnectThread(Controller c) {
+	connectThread(Controller c) {
 		controller = c;
 	}
 
 	public void run() {
-		controller.Start();
+		controller.start();
 	}
 }
 
-class FileThread extends Thread {
+class fileThread extends Thread {
 	Controller controller = new Controller();
 	File file;
-	boolean iswhisper;
+	boolean isWhisper;
 	String receiver;
 
-	FileThread(Controller c, File file, boolean iswhisper, String receiver) {
+	fileThread(Controller c, File file, boolean isWhisper, String receiver) {
 		controller = c;
 		this.file = file;
-		this.iswhisper = iswhisper;
+		this.isWhisper = isWhisper;
 		this.receiver = receiver;
 	}
 
 	public void run() {
-		controller.FileSend(file, iswhisper, receiver);
+		controller.fileSend(file, isWhisper, receiver);
 	}
 }
 
-class FileReceiverThread extends Thread {
+class fileReceiverThread extends Thread {
 	Controller controller = new Controller();
-	String filename;
+	String fileName;
 
-	FileReceiverThread(Controller c, String filename) {
+	fileReceiverThread(Controller c, String fileName) {
 		controller = c;
-		this.filename = filename;
+		this.fileName = fileName;
 	}
 
 	public void run() {
-		controller.FileReceiver(filename);
+		controller.fileReceiver(fileName);
 	}
 
 }
